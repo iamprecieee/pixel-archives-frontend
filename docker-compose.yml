@@ -1,0 +1,14 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_SOLANA_PROGRAM_ID: ${VITE_SOLANA_PROGRAM_ID}
+        VITE_SOLANA_NETWORK: ${VITE_SOLANA_NETWORK}
+        VITE_API_TARGET: ${VITE_API_TARGET}
+        VITE_WS_TARGET: ${VITE_WS_TARGET}
+        VITE_ALLOWED_HOSTS: ${VITE_ALLOWED_HOSTS}
+    ports:
+      - "${VITE_PORT:-5173}:5173"
+    restart: unless-stopped

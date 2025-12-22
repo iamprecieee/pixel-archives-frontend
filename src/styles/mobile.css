@@ -1,0 +1,98 @@
+/* Mobile Responsiveness Styles */
+
+@media (max-width: 480px) {
+  .dashboard-actions {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    width: 100%;
+  }
+
+  .dashboard-actions button {
+    width: 100% !important;
+  }
+
+  .canvas-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .section-title {
+    font-size: 1.2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .canvas-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .canvas-palette-container {
+    flex-direction: column !important;
+  }
+
+  .color-palette-panel {
+    order: 2 !important;
+    max-height: none !important;
+    width: 100% !important;
+  }
+
+  .color-palette-panel > div {
+    grid-template-columns: repeat(8, 24px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .canvas-action-bar {
+    width: 95% !important;
+    padding: 0.75rem !important;
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    bottom: 60px !important;
+  }
+
+  .canvas-action-bar > * {
+    width: 100%;
+    text-align: center;
+  }
+
+  .canvas-header {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    align-items: flex-start !important;
+  }
+
+  .canvas-header-actions {
+    flex-direction: column !important;
+    width: 100%;
+    gap: 0.5rem !important;
+  }
+
+  .canvas-header-actions button {
+    width: 100% !important;
+  }
+
+  .color-palette {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1.2rem !important;
+  }
+
+  h3 {
+    font-size: 1rem !important;
+  }
+
+  .card {
+    padding: 0.75rem !important;
+  }
+}

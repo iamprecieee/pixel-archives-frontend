@@ -1,0 +1,25 @@
+:root {
+  --color-primary: rgb(169, 56, 56);
+  --color-secondary: rgb(236, 236, 222);
+  --color-background: rgb(236, 236, 222);
+  --color-text: rgb(169, 56, 56);
+  --color-success: #16a085;
+  --color-dark-success: #14987e;
+  --color-warning: #d97706;
+  --color-neutral: #666;
+  --color-accent: #3b82f6;
+
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  --shadow-card: 0 4px 7px rgba(40, 40, 40, 1);
+  --shadow-hover: 0 6px 12px rgba(40, 40, 40, 1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+  --border-radius: 10px;
+  --border-width: 3px;
+}

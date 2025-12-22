@@ -1,0 +1,173 @@
+/* Wallet Adapter Overrides */
+
+/* Main wallet button */
+.wallet-adapter-button {
+  background-color: var(--color-background) !important;
+  color: var(--color-primary) !important;
+  font-family: "Courier New", monospace !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
+  border-radius: 5px !important;
+  box-shadow: var(--shadow-card) !important;
+  border: 2px solid var(--color-primary) !important;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease !important;
+  padding: 8px 16px !important;
+  letter-spacing: 2px !important;
+}
+
+.wallet-adapter-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 4px 4px 0px var(--color-primary) !important;
+  background-color: var(--color-background) !important;
+}
+
+.wallet-adapter-button:not([disabled]):hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 4px 4px 0px var(--color-primary) !important;
+  background-color: var(--color-background) !important;
+}
+
+.wallet-adapter-dropdown-list {
+  background-color: var(--color-background) !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: var(--shadow-card) !important;
+  font-family: "Courier New", monospace !important;
+}
+
+.wallet-adapter-dropdown-list-item {
+  color: var(--color-primary) !important;
+  font-weight: bolder !important;
+  font-size: 0.97rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.2px !important;
+  padding: var(--spacing-xs) !important;
+  cursor: pointer !important;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease !important;
+  margin-bottom: var(--spacing-xs) !important;
+}
+
+.wallet-adapter-dropdown-list-item:hover {
+  background-color: var(--color-primary) !important;
+  color: var(--color-secondary) !important;
+  transform: translateY(-2px) !important;
+}
+
+.wallet-adapter-modal-overlay {
+  background: rgba(169, 56, 56, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.wallet-adapter-modal-wrapper {
+  background-color: var(--color-background) !important;
+  font-family: "Courier New", monospace !important;
+  font-weight: bold !important;
+  background-image:
+    linear-gradient(rgba(169, 56, 56, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(169, 56, 56, 0.1) 1px, transparent 1px) !important;
+  background-size: 50px 50px !important;
+  background-position: center !important;
+}
+
+.wallet-adapter-modal-container {
+  background-color: var(--color-secondary) !important;
+}
+
+.wallet-adapter-modal-title {
+  color: var(--color-primary) !important;
+  font-family: "Courier New", monospace !important;
+  font-weight: bolder !important;
+  text-transform: uppercase !important;
+  font-size: 1.5rem !important;
+  letter-spacing: 1.5px !important;
+  border-bottom: 2px solid var(--color-primary) !important;
+  padding-bottom: 0.5rem !important;
+  width: 100% !important;
+  text-align: center !important;
+}
+
+.wallet-adapter-modal-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--spacing-md) !important;
+  padding: var(--spacing-sm) !important;
+}
+
+.wallet-adapter-button[role="menuitem"] {
+  background-color: var(--color-background) !important;
+  color: var(--color-primary) !important;
+  border: 2px solid var(--color-primary) !important;
+  justify-content: flex-start !important;
+  padding: 8px 16px !important;
+  border-radius: 5px !important;
+  margin-bottom: 0 !important;
+  font-size: 1.1rem !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: all 0.2s ease !important;
+}
+
+.wallet-adapter-button[role="menuitem"]:hover {
+  background-color: var(--color-background) !important;
+  color: var(--color-primary) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 4px 4px 0px var(--color-primary) !important;
+}
+
+.wallet-adapter-modal-button-close {
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: var(--spacing-sm) !important;
+}
+
+.wallet-adapter-modal-button-close svg,
+.wallet-adapter-modal-button-close path {
+  fill: var(--color-neutral) !important;
+}
+
+.wallet-adapter-modal-button-close:hover {
+  background-color: transparent !important;
+  transform: scale(1.1) !important;
+}
+
+.wallet-adapter-modal-button-close:hover svg,
+.wallet-adapter-modal-button-close:hover path {
+  fill: var(--color-primary) !important;
+}
+
+/* "More options" */
+.wallet-adapter-modal-list-more,
+.wallet-adapter-modal-list-more span {
+  background-color: transparent !important;
+  color: var(--color-neutral) !important;
+  font-family: "Courier New", monospace !important;
+  font-size: 0.9rem !important;
+  font-weight: bold !important;
+  fill: var(--color-neutral) !important;
+}
+
+.wallet-adapter-modal-list-more svg,
+.wallet-adapter-modal-list-more path {
+  fill: var(--color-neutral) !important;
+  stroke: var(--color-neutral) !important;
+  color: var(--color-neutral) !important;
+}
+
+.wallet-adapter-modal-list-more:hover,
+.wallet-adapter-modal-list-more:hover span {
+  color: var(--color-primary) !important;
+}
+
+.wallet-adapter-modal-list-more:hover svg,
+.wallet-adapter-modal-list-more:hover path {
+  fill: var(--color-primary) !important;
+  stroke: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+.wallet-adapter-modal-list-more:active {
+  background-color: transparent !important;
+}
