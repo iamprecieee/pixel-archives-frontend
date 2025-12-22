@@ -211,11 +211,29 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       toast("Mint countdown cancelled", { icon: "❌" });
     };
 
+    const handleMintingStarted = () => {
+      setCanvas((current) =>
+        current ? { ...current, state: "minting" } : null,
+      );
+      toast("Minting in progress...", { icon: "⏳" });
+    };
+
+    const handleMintingFailed = (update: { reason: string }) => {
+      setMintCountdown(null);
+      setMintStatus(false);
+      setCanvas((current) =>
+        current ? { ...current, state: "published" } : null,
+      );
+      toast.error(`Minting failed: ${update.reason}`);
+    };
+
     wsService.on("Pixel", handlePixelUpdate);
     wsService.on("Published", handlePublished);
     wsService.on("Minted", handleMinted);
     wsService.on("MintCountdown", handleMintCountdown);
     wsService.on("MintCountdownCancelled", handleMintCountdownCancelled);
+    wsService.on("MintingStarted", handleMintingStarted);
+    wsService.on("MintingFailed", handleMintingFailed);
 
     return () => {
       wsService.off("Pixel", handlePixelUpdate);
@@ -223,6 +241,8 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       wsService.off("Minted", handleMinted);
       wsService.off("MintCountdown", handleMintCountdown);
       wsService.off("MintCountdownCancelled", handleMintCountdownCancelled);
+      wsService.off("MintingStarted", handleMintingStarted);
+      wsService.off("MintingFailed", handleMintingFailed);
     };
   }, []);
 
@@ -943,12 +963,23 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
   const handleAnnounceMint = async () => {
     if (!canvas || !publicKey) return;
 
+    // Optimistically lock canvas immediately
+    setCanvas((current) =>
+      current ? { ...current, state: "mint_pending" } : null,
+    );
+    setMintCountdown(30);
+
     try {
       await rpc("nft.announceMint", { canvas_id: canvas.id });
-      // WebSocket will handle setting mintCountdown and state
+      // WebSocket will handle setting mintCountdown and state for other users
       toast.success("Mint announced! Countdown started.");
     } catch (err: unknown) {
       console.error("Announce mint failed:", err);
+      // Revert optimistic update on failure
+      setCanvas((current) =>
+        current ? { ...current, state: "published" } : null,
+      );
+      setMintCountdown(null);
       toast.error((err as Error).message || "Failed to announce mint");
     }
   };
