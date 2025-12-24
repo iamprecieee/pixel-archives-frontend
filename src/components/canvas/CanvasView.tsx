@@ -668,6 +668,14 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       });
 
       if (response.success) {
+        // Update pixel color in state
+        setPixels((prev) =>
+          prev.map((p) =>
+            p.x === selectedPixel.x && p.y === selectedPixel.y
+              ? { ...p, color: selectedColor }
+              : p,
+          ),
+        );
         setPublishStatus("PAINTED!");
         toast.success("Pixel painted successfully!");
         setTimeout(() => setPublishStatus(null), 2000);
@@ -813,10 +821,12 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         signature,
       });
 
-      // Clear pending state on success
+      // Clear pending state and update ownership on success
       setPixels((prev) =>
         prev.map((p) =>
-          p.x === x && p.y === y ? { ...p, pending: false } : p,
+          p.x === x && p.y === y
+            ? { ...p, pending: false, owner_id: user?.id, price_lamports: lamports }
+            : p,
         ),
       );
 
