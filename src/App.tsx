@@ -24,6 +24,12 @@ function App() {
   useEffect(() => {
     if (isAuthenticated && user) {
       if (!publicKey || publicKey.toBase58() !== user.wallet_address) {
+        // Call auth.logout to blacklist the token before clearing local state
+        import("./services/rpc").then(({ rpc }) => {
+          rpc("auth.logout", {}).catch(() => {
+            // Ignore errors - we're logging out anyway
+          });
+        });
         clearAuth();
         setView("select");
         setActiveCanvasId(null);
