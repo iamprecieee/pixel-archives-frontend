@@ -821,6 +821,7 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       );
 
       setPublishStatus("BID PLACED!");
+      toast.success("Bid placed successfully!");
       setCooldown(5000); // Apply cooldown
       setSelectedPixel(null); // Clear selection
       setTimeout(() => setPublishStatus(""), 2000);

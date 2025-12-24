@@ -34,6 +34,9 @@ export const rpc = async <T>(method: string, params: any = {}): Promise<T> => {
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error("Too many requests. Please wait a moment and try again.");
+      }
       throw new Error(`HTTP Error: ${response.status}`);
     }
 
