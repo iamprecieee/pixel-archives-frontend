@@ -821,11 +821,11 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         signature,
       });
 
-      // Clear pending state and update ownership on success
+      // Clear pending state and update ownership + color on success
       setPixels((prev) =>
         prev.map((p) =>
           p.x === x && p.y === y
-            ? { ...p, pending: false, owner_id: user?.id, price_lamports: lamports }
+            ? { ...p, pending: false, owner_id: user?.id, price_lamports: lamports, color: selectedColor }
             : p,
         ),
       );
