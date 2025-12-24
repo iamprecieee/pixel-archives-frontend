@@ -34,6 +34,10 @@
   border-radius: var(--border-radius) !important;
   box-shadow: var(--shadow-card) !important;
   font-family: "Courier New", monospace !important;
+  border: 2px solid var(--color-primary) !important;
+  right: 0 !important;
+  left: auto !important;
+  min-width: 100% !important;
 }
 
 .wallet-adapter-dropdown-list-item {

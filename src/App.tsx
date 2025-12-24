@@ -190,7 +190,7 @@ function App() {
               <div className="flex flex-col gap-md items-center">
                 <WalletButton />
 
-                <div className="flex gap-md justify-center w-full">
+                <div className="flex flex-col gap-md items-center w-full">
                   <RetroButton
                     onClick={() => setView("register")}
                     variant="primary"
