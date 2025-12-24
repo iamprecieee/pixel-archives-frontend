@@ -36,12 +36,32 @@ export const RetroLayout: FC<RetroLayoutProps> = ({
         </div>
       </header>
       <main className={styles.main}>{children}</main>
+      <div
+        style={{
+          textAlign: "center",
+          padding: "0.5rem",
+          color: "#888",
+          fontSize: "0.8rem",
+          borderTop: "1px solid #444",
+        }}
+      >
+        ⚠️ This app is running on Solana Devnet. Tokens have no real value.
+      </div>
       <footer className={styles.footer}>
-        {isAuthenticated ? (
-          <span>SYSTEM ONLINE_</span>
-        ) : (
-          <span>SYSTEM READY_</span>
-        )}
+        <span>
+          {isAuthenticated ? "SYSTEM ONLINE_" : "SYSTEM READY_"}
+        </span>
+        <span style={{ marginLeft: "auto", opacity: 0.9 }}>
+          built by{" "}
+          <a
+            href="https://github.com/iamprecieee"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "var(--color-secondary)", textDecoration: "none" }}
+          >
+            iamprecieee
+          </a>
+        </span>
       </footer>
     </div>
   );
