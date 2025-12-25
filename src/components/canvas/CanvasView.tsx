@@ -121,7 +121,7 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
 
   const { user } = useAuthStore();
   const { initiatePublish, confirmPublish } = useCanvasStore();
-  const { publicKey, sendTransaction, signTransaction } = useWallet();
+  const { publicKey, signTransaction } = useWallet();
   const { connection } = useConnection();
 
   // Derived state
@@ -1047,7 +1047,15 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       transaction.recentBlockhash = blockhash;
       transaction.feePayer = publicKey;
 
-      const signature = await sendTransaction(transaction, connection);
+      // Use signTransaction + sendRawTransaction for wallet compatibility
+      if (!signTransaction) {
+        throw new Error("Wallet does not support transaction signing!");
+      }
+      const signedTx = await signTransaction(transaction);
+      const signature = await connection.sendRawTransaction(signedTx.serialize(), {
+        skipPreflight: true,
+        preflightCommitment: "confirmed",
+      });
       await connection.confirmTransaction(signature, "confirmed");
 
       toast.success(
