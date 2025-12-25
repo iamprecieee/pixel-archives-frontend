@@ -915,11 +915,15 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         throw simErr;
       }
 
-      // 3. Send Transaction
-      const signature = await sendTransaction(transaction, connection);
-
-      setPublishStatus("CONFIRMING MINT...");
-      await connection.confirmTransaction(signature, "confirmed");
+      // 3. Send Transaction using signTransaction + sendRawTransaction for wallet compatibility
+      if (!signTransaction) {
+        throw new Error("Wallet does not support transaction signing!");
+      }
+      const signedTx = await signTransaction(transaction);
+      const signature = await connection.sendRawTransaction(signedTx.serialize(), {
+        skipPreflight: true,
+        preflightCommitment: "confirmed",
+      });
 
       setPublishStatus("CONFIRMING MINT...");
       await connection.confirmTransaction(signature, "confirmed");
