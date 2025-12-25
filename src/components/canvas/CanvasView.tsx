@@ -698,6 +698,9 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
   };
 
   const handleBid = async () => {
+    // Prevent double-clicking while bid is in progress
+    if (publishStatus) return;
+
     if (!selectedPixel || !canvas || !publicKey) {
       toast.error("Please connect wallet to bid");
       return;
@@ -1384,7 +1387,11 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
                       color: "var(--color-primary)",
                     }}
                   />
-                  <RetroButton onClick={handleBid} variant="primary">
+                  <RetroButton
+                    onClick={handleBid}
+                    variant="primary"
+                    disabled={!!publishStatus}
+                  >
                     BID {bidAmount} SOL
                   </RetroButton>
                 </div>
