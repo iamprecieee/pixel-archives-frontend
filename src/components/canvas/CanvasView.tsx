@@ -531,15 +531,15 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         errorMsg += `\nLogs: ${(err as any).logs.join("\n")}`;
       }
 
-      // Reset status first before cleanup
-      setPublishStatus("");
+      // Show cancelling state to prevent double-clicking while cleanup runs
+      setPublishStatus("CANCELLING...");
 
       // Cancel the pending publish state in backend (release lock + reset state)
       try {
         await rpc("canvas.cancelPublish", { canvas_id: canvas.id });
         // Only show error if wallet was rejected, not a system error
         if (errorMsg.includes("User rejected") || errorMsg.includes("rejected the request")) {
-          toast("Publish cancelled", { icon: "ℹ️" });
+          toast("Publish cancelled");
         } else {
           toast.error(`Publish failed: ${errorMsg}`);
         }
@@ -547,6 +547,9 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         console.error("Failed to cancel publish state:", cleanupErr);
         // Still show the original error
         toast.error(`Publish failed: ${errorMsg}`);
+      } finally {
+        // Only clear status AFTER cleanup completes to prevent race condition
+        setPublishStatus("");
       }
     }
   };
