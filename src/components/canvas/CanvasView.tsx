@@ -215,7 +215,7 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       setCanvas((current) =>
         current ? { ...current, state: "minting" } : null,
       );
-      toast("Minting in progress...", { icon: "⏳" });
+      toast("Minting in progress...");
     };
 
     const handleMintingFailed = (update: { reason: string }) => {
