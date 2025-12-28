@@ -44,15 +44,12 @@ Solana blockchain integration for wallet connection and transactions.
 **PDA Derivation**:
 
 - `deriveCanvasPda` - Canvas account PDA
-- `derivePixelPda` - Pixel account PDA
 - `deriveMintPda` - NFT mint PDA
-- `deriveMetadataPda` - Metaplex metadata PDA
 
 **Utility Functions**:
 
-- `uuidToBytes` - Convert UUID string to bytes
+- `uuidToBytes` - Convert UUID string to 16-byte array
 - `writeString` - Write Borsh-encoded string to buffer
-- `getDiscriminator` - Calculate Anchor instruction discriminator
 
 ### Discriminators
 
@@ -73,15 +70,6 @@ const [canvasPDA] = PublicKey.findProgramAddressSync(
 );
 ```
 
-Pixel PDA:
-
-```typescript
-const [pixelPDA] = PublicKey.findProgramAddressSync(
-  [Buffer.from("pixel"), canvasIdBytes, new Uint8Array([x, y])],
-  PROGRAM_ID,
-);
-```
-
 Mint PDA:
 
 ```typescript
@@ -96,15 +84,23 @@ const [mintPDA] = PublicKey.findProgramAddressSync(
 1. Build instruction using `solana.ts` builders
 2. Create transaction with recent blockhash
 3. Sign with wallet using `signTransaction()`
-4. Serialize to base64
-5. Submit via backend API
+4. Send raw transaction with `skipPreflight: true`
+5. Confirm transaction on backend
 
 ## Error Handling
+
+Uses `utils/safeError.ts` for production safety:
+
+- Wallet errors: Sanitized via `getSafeErrorMessage()`
+- Transaction errors: Logged via `devLog` (dev-only)
+- User-facing: Safe backend messages passed through, internal errors hidden
+
+Common error scenarios:
 
 - Wallet not connected: Prompt connection
 - Insufficient SOL: Display balance error
 - Rejected: User declined in wallet
-- Simulation failed: Invalid instruction
+- On-chain failure: Generic "Transaction failed" message
 
 ## Security
 

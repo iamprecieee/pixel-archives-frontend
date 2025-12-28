@@ -25,7 +25,7 @@ import { sha256 } from "js-sha256";
 
 // Calculate discriminators dynamically (Anchor format)
 // sha256("global:<instruction_name>") -> first 8 bytes
-export const getDiscriminator = (instructionName: string): Uint8Array => {
+const getDiscriminator = (instructionName: string): Uint8Array => {
   const preimage = `global:${instructionName}`;
   const hash = sha256.digest(preimage);
   return new Uint8Array(hash.slice(0, 8));
@@ -65,7 +65,7 @@ export const deriveCanvasPda = (canvasIdBytes: Uint8Array) => {
   );
 };
 
-export const derivePixelPda = (
+const derivePixelPda = (
   canvasIdBytes: Uint8Array,
   x: number,
   y: number,
@@ -311,20 +311,4 @@ export const buildSignMetadataIx = (
     programId: METADATA_PROGRAM_ID,
     data,
   });
-};
-
-/**
- * Derive metadata PDA for a given mint address (for external use).
- */
-export const deriveMetadataPda = (
-  mintAddress: PublicKey,
-): [PublicKey, number] => {
-  return PublicKey.findProgramAddressSync(
-    [
-      Buffer.from("metadata"),
-      METADATA_PROGRAM_ID.toBuffer(),
-      mintAddress.toBuffer(),
-    ],
-    METADATA_PROGRAM_ID,
-  );
 };

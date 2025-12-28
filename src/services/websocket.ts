@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { devLog } from "../utils/safeError";
 
 type WebSocketHandler = (data: any) => void;
 
@@ -35,7 +36,7 @@ class WebSocketService {
     this.socket = new WebSocket(url);
 
     this.socket.onopen = () => {
-      console.log("WebSocket Connected");
+      devLog.log("WebSocket Connected");
       this.clearReconnect();
       this.lastPongTime = Date.now();
       this.startHeartbeat();
@@ -61,13 +62,13 @@ class WebSocketService {
     };
 
     this.socket.onclose = () => {
-      console.log("WebSocket Disconnected");
+      devLog.log("WebSocket Disconnected");
       this.stopHeartbeat();
       this.scheduleReconnect();
     };
 
     this.socket.onerror = () => {
-      console.error("WebSocket Error (connection failed)");
+      devLog.error("WebSocket Error (connection failed)");
     };
   }
 
@@ -91,7 +92,7 @@ class WebSocketService {
           timeSinceLastPong >
           this.HEARTBEAT_INTERVAL_MS + this.HEARTBEAT_TIMEOUT_MS
         ) {
-          console.warn("WebSocket heartbeat timeout, reconnecting...");
+          devLog.warn("WebSocket heartbeat timeout, reconnecting...");
           this.socket.close();
           return;
         }
@@ -111,7 +112,7 @@ class WebSocketService {
   private scheduleReconnect() {
     if (!this.reconnectTimer && this.canvasId) {
       this.reconnectTimer = setTimeout(() => {
-        console.log("Attempting to reconnect...");
+        devLog.log("Attempting to reconnect...");
         if (this.canvasId) {
           this.connect(this.canvasId);
         }

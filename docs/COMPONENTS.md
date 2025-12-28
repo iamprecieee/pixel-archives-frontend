@@ -63,8 +63,18 @@ Reusable components (Button, Modal, etc).
 User Action → Handler → Store Update → API/WebSocket → Store Update → Re-render
 ```
 
+## Utilities
+
+### utils/safeError.ts
+
+Error handling utilities for production safety:
+
+- **`getSafeErrorMessage(error, fallback)`** - Sanitizes error messages for user display. Passes through safe backend messages (like "Bid too low") while hiding internal errors.
+- **`devLog`** - Development-only console logging (`devLog.error`, `devLog.warn`, `devLog.log`). Silent in production builds.
+
 ## Patterns
 
 - Hooks: `useState`, `useEffect`, Zustand hooks, `useWebSocket`
 - Props: TypeScript interfaces
 - Styling: CSS modules and vanilla CSS
+- Error handling: `devLog` for dev-only logging, `getSafeErrorMessage` for user toasts

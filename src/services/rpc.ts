@@ -2,6 +2,8 @@ const API_URL = import.meta.env.VITE_API_TARGET
   ? `${import.meta.env.VITE_API_TARGET}/api`
   : "/api";
 
+import { devLog } from "../utils/safeError";
+
 interface RpcResponse<T> {
   jsonrpc: "2.0";
   result?: T;
@@ -52,7 +54,7 @@ export const rpc = async <T>(method: string, params: any = {}): Promise<T> => {
 
     return data.result as T;
   } catch (error) {
-    console.error("RPC Call Failed:", error);
+    devLog.error("RPC Call Failed:", error);
     throw error;
   }
 };

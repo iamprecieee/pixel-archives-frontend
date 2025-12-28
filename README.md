@@ -19,7 +19,7 @@ The frontend provides:
 - State: Zustand 5
 - Styling: Vanilla CSS
 - Blockchain: Solana Wallet Adapter, @solana/web3.js 1.98
-- Utilities: bs58, js-sha256, tweetnacl
+- Utilities: bs58, js-sha256
 
 ## Directory Structure
 
@@ -43,6 +43,7 @@ frontend/
 │   ├── styles/           # CSS files
 │   ├── types/            # TypeScript types
 │   ├── utils/            # Utilities
+│   │   └── safeError.ts  # Error sanitization for production safety
 │   ├── App.tsx
 │   └── main.tsx
 ├── docs/                 # Documentation

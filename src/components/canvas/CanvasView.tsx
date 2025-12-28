@@ -18,6 +18,7 @@ import {
   uuidToBytes,
 } from "../../services/solana";
 import toast from "react-hot-toast";
+import { devLog, getSafeErrorMessage } from "../../utils/safeError";
 
 // Color palette - 64 retro colors (matching backend CANVAS_COLORS)
 const COLORS = [
@@ -505,8 +506,8 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         const txDetails = await connection.getTransaction(signature, {
           maxSupportedTransactionVersion: 0,
         });
-        console.error("Transaction failed on-chain:", confirmation.value.err);
-        console.error("Transaction logs:", txDetails?.meta?.logMessages);
+        devLog.error("Transaction failed on-chain:", confirmation.value.err);
+        devLog.error("Transaction logs:", txDetails?.meta?.logMessages);
         throw new Error(
           `On-chain error: ${JSON.stringify(confirmation.value.err)}\nLogs: ${txDetails?.meta?.logMessages?.join("\n")}`,
         );
@@ -522,12 +523,12 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
 
       setTimeout(() => setPublishStatus(""), 2000);
     } catch (err: unknown) {
-      console.error("Publish failed:", err);
+      devLog.error("Publish failed:", err);
 
       // Extract logs if available
       let errorMsg = (err as Error).message || "Unknown error";
       if ((err as any).logs) {
-        console.error("Simulation Logs:", (err as any).logs);
+        devLog.error("Simulation Logs:", (err as any).logs);
         errorMsg += `\nLogs: ${(err as any).logs.join("\n")}`;
       }
 
@@ -541,12 +542,12 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         if (errorMsg.includes("User rejected") || errorMsg.includes("rejected the request")) {
           toast("Publish cancelled");
         } else {
-          toast.error(`Publish failed: ${errorMsg}`);
+          toast.error(getSafeErrorMessage(err, "Publish failed. Please try again."));
         }
       } catch (cleanupErr) {
-        console.error("Failed to cancel publish state:", cleanupErr);
+        devLog.error("Failed to cancel publish state:", cleanupErr);
         // Still show the original error
-        toast.error(`Publish failed: ${errorMsg}`);
+        toast.error(getSafeErrorMessage(err, "Publish failed. Please try again."));
       } finally {
         // Only clear status AFTER cleanup completes to prevent race condition
         setPublishStatus("");
@@ -592,7 +593,7 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         y,
         color: selectedColor,
       }).catch((error: any) => {
-        console.error("Failed to place pixel:", error);
+        devLog.error("Failed to place pixel:", error);
 
         setPixels(previousPixels);
 
@@ -606,7 +607,7 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
           setCooldown(5000);
           toast.error("Cooldown active!");
         } else {
-          toast.error(`Paint failed: ${error.message}`);
+          toast.error(getSafeErrorMessage(error, "Paint failed. Please try again."));
         }
       });
 
@@ -693,16 +694,12 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         throw new Error("Backend failed to confirm paint");
       }
     } catch (error: unknown) {
-      console.error("Paint Error:", error);
+      devLog.error("Paint Error:", error);
       setPublishStatus("FAILED");
       setTimeout(() => setPublishStatus(null), 3000);
 
-      // Extract meaningful error
-      let msg = (error as Error).message || "Unknown error";
-      if ((error as any).logs) {
-        msg = "Transaction failed. See console.";
-      }
-      toast.error(`Paint Failed: ${msg}`);
+      // Use safe error message for user display
+      toast.error(getSafeErrorMessage(error, "Paint failed. Please try again."));
     }
   };
 
@@ -811,14 +808,14 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       );
 
       if (confirmation.value.err) {
-        console.error("Bid Confirmation Error:", confirmation.value.err);
+        devLog.error("Bid Confirmation Error:", confirmation.value.err);
         throw new Error(
           `Transaction failed: ${JSON.stringify(confirmation.value.err)}`,
         );
       }
 
       if (confirmation.value.err) {
-        console.error("Bid Confirmation Error:", confirmation.value.err);
+        devLog.error("Bid Confirmation Error:", confirmation.value.err);
         throw new Error(
           `Transaction failed: ${JSON.stringify(confirmation.value.err)}`,
         );
@@ -848,7 +845,7 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       setSelectedPixel(null); // Clear selection
       setTimeout(() => setPublishStatus(""), 2000);
     } catch (err: unknown) {
-      console.error("Bid failed:", err);
+      devLog.error("Bid failed:", err);
 
       // Clear pending state and rollback on failure
       setPixels(originalPixels);
@@ -862,11 +859,11 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
             y,
           });
         } catch (cancelErr) {
-          console.error("Failed to cancel pixel claim:", cancelErr);
+          devLog.error("Failed to cancel pixel claim:", cancelErr);
         }
       }
 
-      toast.error(`Bid failed: ${(err as Error).message}`);
+      toast.error(getSafeErrorMessage(err, "Bid failed. Please try again."));
       setPublishStatus("");
       if ((err as any).data && (err as any).data.remaining_ms) {
         setCooldown((err as any).data.remaining_ms);
@@ -916,14 +913,14 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       try {
         const simulation = await connection.simulateTransaction(transaction);
         if (simulation.value.err) {
-          console.error("Simulation error:", simulation.value.err);
-          console.error("Simulation logs:", simulation.value.logs);
+          devLog.error("Simulation error:", simulation.value.err);
+          devLog.error("Simulation logs:", simulation.value.logs);
           throw new Error(
             `Simulation failed: ${JSON.stringify(simulation.value.err)}\nLogs: ${simulation.value.logs?.join("\n")}`,
           );
         }
       } catch (simErr) {
-        console.error("Simulation threw:", simErr);
+        devLog.error("Simulation threw:", simErr);
         throw simErr;
       }
 
@@ -959,7 +956,7 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         setMintStatus(false);
       }, 3000);
     } catch (err: unknown) {
-      console.error("Mint failed:", err);
+      devLog.error("Mint failed:", err);
 
       // Cancel minting on backend to revert state to 'published'
       if (canvas) {
@@ -967,18 +964,18 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
           await rpc("nft.cancelMint", { canvas_id: canvas.id });
           setCanvas((prev) => (prev ? { ...prev, state: "published" } : null));
         } catch (cancelErr) {
-          console.error("Failed to cancel mint:", cancelErr);
+          devLog.error("Failed to cancel mint:", cancelErr);
         }
       }
 
       const errorMsg = (err as Error).message || "Mint failed";
       if (
         errorMsg.includes("User rejected") ||
-        errorMsg.includes("Unexpected error")
+        errorMsg.includes("rejected the request")
       ) {
         toast.error("Transaction rejected. Minting cancelled.");
       } else {
-        toast.error(`Mint failed: ${errorMsg}`);
+        toast.error(getSafeErrorMessage(err, "Mint failed. Please try again."));
       }
 
       setPublishStatus("");
@@ -1001,13 +998,13 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       // WebSocket will handle setting mintCountdown and state for other users
       toast.success("Mint announced! Countdown started.");
     } catch (err: unknown) {
-      console.error("Announce mint failed:", err);
+      devLog.error("Announce mint failed:", err);
       // Revert optimistic update on failure
       setCanvas((current) =>
         current ? { ...current, state: "published" } : null,
       );
       setMintCountdown(null);
-      toast.error((err as Error).message || "Failed to announce mint");
+      toast.error(getSafeErrorMessage(err, "Failed to announce mint. Please try again."));
     }
   };
 
@@ -1020,8 +1017,8 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
       // WebSocket will handle clearing countdown and state
       toast.success("Mint countdown cancelled.");
     } catch (err: unknown) {
-      console.error("Cancel mint countdown failed:", err);
-      toast.error((err as Error).message || "Failed to cancel countdown");
+      devLog.error("Cancel mint countdown failed:", err);
+      toast.error(getSafeErrorMessage(err, "Failed to cancel countdown. Please try again."));
     }
   };
 
@@ -1071,14 +1068,14 @@ export const CanvasView: FC<CanvasViewProps> = ({ canvasId, onBack }) => {
         "Creator verification successful! Your creator status is now verified on-chain.",
       );
     } catch (err: any) {
-      console.error("Creator verification failed:", err);
-      const errorMsg = err.message || "Verification failed";
-      if (errorMsg.includes("User rejected")) {
+      devLog.error("Creator verification failed:", err);
+      const errorMsg = err.message || "";
+      if (errorMsg.includes("User rejected") || errorMsg.includes("rejected the request")) {
         toast.error("Transaction rejected.");
       } else if (errorMsg.includes("Creator not found")) {
         toast.error("You are not listed as a creator on this NFT.");
       } else {
-        toast.error(`Verification failed: ${errorMsg}`);
+        toast.error(getSafeErrorMessage(err, "Verification failed. Please try again."));
       }
     } finally {
       setVerifyingCreator(false);

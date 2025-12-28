@@ -3,12 +3,12 @@ export interface Canvas {
   name: string;
   invite_code: string;
   state:
-    | "draft"
-    | "publishing"
-    | "published"
-    | "mint_pending"
-    | "minting"
-    | "minted";
+  | "draft"
+  | "publishing"
+  | "published"
+  | "mint_pending"
+  | "minting"
+  | "minted";
   owner_id: string;
   canvas_pda?: string;
   mint_address?: string;
@@ -24,7 +24,3 @@ export interface CanvasPixel {
   pending?: boolean;
 }
 
-export interface CanvasWithPixels {
-  canvas: Canvas;
-  pixels: CanvasPixel[];
-}

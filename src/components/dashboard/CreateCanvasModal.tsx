@@ -6,6 +6,7 @@ import { RetroButton } from "../common/RetroButton";
 import { useCanvasStore } from "../../store/canvasStore";
 import { buildInitializeIx } from "../../services/solana";
 import { rpc } from "../../services/rpc";
+import { devLog, getSafeErrorMessage } from "../../utils/safeError";
 
 interface CreateCanvasModalProps {
   onClose: () => void;
@@ -87,7 +88,7 @@ export const CreateCanvasModal: FC<CreateCanvasModalProps> = ({ onClose }) => {
       toast.success("Canvas Initialized!");
       onClose();
     } catch (err: any) {
-      console.error(err);
+      devLog.error("Canvas creation failed:", err);
 
       // ROLLBACK: Delete the Draft canvas if chain interaction failed
       if (canvasId) {
@@ -96,15 +97,15 @@ export const CreateCanvasModal: FC<CreateCanvasModalProps> = ({ onClose }) => {
           await rpc("canvas.delete", { canvas_id: canvasId });
           await fetchCanvases(); // Remove from list
         } catch (delErr) {
-          console.error("Rollback failed:", delErr);
+          devLog.error("Rollback failed:", delErr);
         }
       }
 
-      const errorMsg = err.message || "Failed to initialize";
-      if (errorMsg.includes("User rejected")) {
+      const errorMsg = err.message || "";
+      if (errorMsg.includes("User rejected") || errorMsg.includes("rejected the request")) {
         toast.error("Transaction rejected. Canvas creation cancelled.");
       } else {
-        toast.error(`Failed: ${errorMsg}`);
+        toast.error(getSafeErrorMessage(err, "Failed to create canvas. Please try again."));
       }
     } finally {
       setLocalLoading(false);
