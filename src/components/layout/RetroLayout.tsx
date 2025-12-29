@@ -1,6 +1,8 @@
 import { type FC, type ReactNode } from "react";
 import styles from "./RetroLayout.module.css";
 import { useAuthStore } from "../../store/authStore";
+import { ThemeToggle } from "../common/ThemeToggle";
+import { FloatingPapers } from "../effects/FloatingPapers";
 
 interface RetroLayoutProps {
   children: ReactNode;
@@ -15,6 +17,7 @@ export const RetroLayout: FC<RetroLayoutProps> = ({
 
   return (
     <div className={styles.container}>
+      <FloatingPapers />
       <header className={styles.header}>
         <div
           className={styles.logo}
@@ -26,13 +29,16 @@ export const RetroLayout: FC<RetroLayoutProps> = ({
         >
           PIXEL
         </div>
-        <div className={styles.status}>
-          STATUS:{" "}
-          {isAuthenticated ? (
-            <span>ONLINE</span>
-          ) : (
-            <span style={{ color: "#888" }}>OFFLINE</span>
-          )}
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <ThemeToggle />
+          <div className={styles.status}>
+            STATUS:{" "}
+            {isAuthenticated ? (
+              <span>ONLINE</span>
+            ) : (
+              <span style={{ color: "#888" }}>OFFLINE</span>
+            )}
+          </div>
         </div>
       </header>
       <main className={styles.main}>{children}</main>
