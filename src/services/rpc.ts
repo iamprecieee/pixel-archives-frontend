@@ -1,8 +1,10 @@
+import { devLog } from "../utils/safeError";
+import { refreshToken, isRefreshing } from "./tokenRefresh";
+import { useAuthStore } from "../store/authStore";
+
 const API_URL = import.meta.env.VITE_API_TARGET
   ? `${import.meta.env.VITE_API_TARGET}/api`
   : "/api";
-
-import { devLog } from "../utils/safeError";
 
 interface RpcResponse<T> {
   jsonrpc: "2.0";
@@ -10,16 +12,14 @@ interface RpcResponse<T> {
   error?: {
     code: number;
     message: string;
-    data?: any;
+    data?: unknown;
   };
   id: number | string;
 }
 
-export const rpc = async <T>(method: string, params: any = {}): Promise<T> => {
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-  };
+const UNAUTHORIZED_ERROR_CODE = -32020;
 
+export const rpc = async <T>(method: string, params: Record<string, unknown> = {}, isRetry = false): Promise<T> => {
   const payload = {
     jsonrpc: "2.0",
     method,
@@ -30,7 +30,7 @@ export const rpc = async <T>(method: string, params: any = {}): Promise<T> => {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers,
+      headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(payload),
     });
@@ -45,8 +45,22 @@ export const rpc = async <T>(method: string, params: any = {}): Promise<T> => {
     const data: RpcResponse<T> = await response.json();
 
     if (data.error) {
-      // Throw full error object to access data (e.g. cooldown remaining_ms)
-      const err: any = new Error(data.error.message || "RPC Error");
+      // Retry with refresh on auth errors (skip for auth methods and retries)
+      if (
+        data.error.code === UNAUTHORIZED_ERROR_CODE &&
+        !method.startsWith("auth.") &&
+        !isRetry &&
+        !isRefreshing()
+      ) {
+        try {
+          await refreshToken();
+          return rpc<T>(method, params, true);
+        } catch {
+          useAuthStore.getState().clearAuth();
+        }
+      }
+
+      const err: Error & { code?: number; data?: unknown } = new Error(data.error.message || "RPC Error");
       err.code = data.error.code;
       err.data = data.error.data;
       throw err;

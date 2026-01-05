@@ -9,6 +9,7 @@ import { RegisterForm } from "./components/auth/RegisterForm";
 import { useAuthStore } from "./store/authStore";
 import { Dashboard } from "./components/dashboard/Dashboard";
 import { CanvasView } from "./components/canvas/CanvasView";
+import { initTokenRefresh, cleanupTokenRefresh } from "./services/tokenRefresh";
 
 import { Toaster } from "react-hot-toast";
 
@@ -22,13 +23,18 @@ function App() {
   const { publicKey } = useWallet();
 
   useEffect(() => {
+    if (isAuthenticated) {
+      initTokenRefresh();
+      return () => cleanupTokenRefresh();
+    }
+  }, [isAuthenticated]);
+
+  // Logout if wallet disconnects or changes
+  useEffect(() => {
     if (isAuthenticated && user) {
       if (!publicKey || publicKey.toBase58() !== user.wallet_address) {
-        // Call auth.logout to blacklist the token before clearing local state
         import("./services/rpc").then(({ rpc }) => {
-          rpc("auth.logout", {}).catch(() => {
-            // Ignore errors - we're logging out anyway
-          });
+          rpc("auth.logout", {}).catch(() => { });
         });
         clearAuth();
         setView("select");
